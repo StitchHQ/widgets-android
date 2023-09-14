@@ -19,6 +19,7 @@ import com.stitch.cardmanagement.utilities.OnSwipeTouchListener
 import java.util.Timer
 import java.util.TimerTask
 
+
 open class ViewCardSDKFragment : CardManagementSDKFragment() {
 
     private lateinit var binding: FragmentViewCardSdkBinding
@@ -133,6 +134,16 @@ open class ViewCardSDKFragment : CardManagementSDKFragment() {
                 super.onSwipeRight()
                 viewModel.isFront.value = !(viewModel.isFront.value ?: true)
             }
+
+            override fun onSwipeUp() {
+                super.onSwipeUp()
+                viewModel.isFront.value = !(viewModel.isFront.value ?: true)
+            }
+
+            override fun onSwipeDown() {
+                super.onSwipeDown()
+                viewModel.isFront.value = !(viewModel.isFront.value ?: true)
+            }
         })
 
         binding.layoutHorizontalFlippable.clCustomerCard.setOnTouchListener(object :
@@ -146,6 +157,16 @@ open class ViewCardSDKFragment : CardManagementSDKFragment() {
                 super.onSwipeRight()
                 viewModel.isFront.value = !(viewModel.isFront.value ?: true)
             }
+
+            override fun onSwipeUp() {
+                super.onSwipeUp()
+                viewModel.isFront.value = !(viewModel.isFront.value ?: true)
+            }
+
+            override fun onSwipeDown() {
+                super.onSwipeDown()
+                viewModel.isFront.value = !(viewModel.isFront.value ?: true)
+            }
         })
 
         binding.layoutVerticalFlippable2.clCustomerCard.setOnTouchListener(object :
@@ -157,6 +178,16 @@ open class ViewCardSDKFragment : CardManagementSDKFragment() {
 
             override fun onSwipeRight() {
                 super.onSwipeRight()
+                viewModel.isFront.value = !(viewModel.isFront.value ?: true)
+            }
+
+            override fun onSwipeUp() {
+                super.onSwipeUp()
+                viewModel.isFront.value = !(viewModel.isFront.value ?: true)
+            }
+
+            override fun onSwipeDown() {
+                super.onSwipeDown()
                 viewModel.isFront.value = !(viewModel.isFront.value ?: true)
             }
         })
@@ -257,7 +288,7 @@ open class ViewCardSDKFragment : CardManagementSDKFragment() {
         if (viewModel.savedCardSettings.get()?.fontFamily != null) {
             viewModel.cardStyleFontFamily.set(viewModel.savedCardSettings.get()?.fontFamily)
         } else {
-            viewModel.cardStyleFontFamily.set(R.font.euclid_flex_bold)
+            viewModel.cardStyleFontFamily.set(R.font.euclid_flex_regular)
         }
         if (viewModel.savedCardSettings.get()?.fontColor != null) {
             viewModel.cardStyleFontColor.set(viewModel.savedCardSettings.get()?.fontColor)
