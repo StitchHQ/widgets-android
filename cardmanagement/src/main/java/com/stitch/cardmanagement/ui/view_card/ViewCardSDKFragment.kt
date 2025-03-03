@@ -223,7 +223,7 @@ open class ViewCardSDKFragment : CardManagementSDKFragment() {
         viewModel.customerNumber.set(viewModel.sdkData.get()?.customerNumber)
         viewModel.programName.set(viewModel.sdkData.get()?.programName)
         viewModel.secureToken.set(viewModel.sdkData.get()?.secureToken)
-        viewModel.fingerPrint.set(viewModel.sdkData.get()?.fingerPrint)
+        viewModel.fingerPrint.set(viewModel.deviceFingerPrint(requireContext()))
         updateCardStyle()
     }
 
@@ -288,13 +288,27 @@ open class ViewCardSDKFragment : CardManagementSDKFragment() {
         if (viewModel.savedCardSettings.get()?.fontFamily != null) {
             viewModel.cardStyleFontFamily.set(viewModel.savedCardSettings.get()?.fontFamily)
         } else {
-            viewModel.cardStyleFontFamily.set(R.font.euclid_flex_regular)
+            viewModel.cardStyleFontFamily.set(R.font.inter_regular)
         }
         if (viewModel.savedCardSettings.get()?.fontColor != null) {
             viewModel.cardStyleFontColor.set(viewModel.savedCardSettings.get()?.fontColor)
         } else {
             viewModel.cardStyleFontColor.set(
                 ContextCompat.getColor(requireContext(), R.color.white)
+            )
+        }
+        if (viewModel.savedCardSettings.get()?.buttonFontColor != null) {
+            viewModel.cardStyleButtonFontColor.set(viewModel.savedCardSettings.get()?.buttonFontColor)
+        } else {
+            viewModel.cardStyleButtonFontColor.set(
+                ContextCompat.getColor(requireContext(), R.color.white)
+            )
+        }
+        if (viewModel.savedCardSettings.get()?.buttonBackgroundColor != null) {
+            viewModel.cardStyleButtonBackgroundColor.set(viewModel.savedCardSettings.get()?.buttonBackgroundColor)
+        } else {
+            viewModel.cardStyleButtonBackgroundColor.set(
+                ContextCompat.getColor(requireContext(), R.color.colorBase)
             )
         }
         if (viewModel.savedCardSettings.get()?.fontSize != null &&

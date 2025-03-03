@@ -4,13 +4,13 @@ import com.google.gson.FieldNamingPolicy
 import com.google.gson.GsonBuilder
 import com.jakewharton.retrofit2.adapter.kotlin.coroutines.CoroutineCallAdapterFactory
 import com.stitch.cardmanagement.BuildConfig
-import com.stitch.cardmanagement.utilities.Constants
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.util.concurrent.TimeUnit
+import kotlin.math.abs
 
 object RetrofitFactory {
 
@@ -31,6 +31,7 @@ object RetrofitFactory {
 
     // Creating Auth Interceptor to add api_key query in front of all the requests.
     private val authInterceptorWidget = Interceptor { chain ->
+        val random = abs((0..999999999999).random())
         val newUrl = chain.request().url
             .newBuilder()
             .build()
@@ -38,7 +39,7 @@ object RetrofitFactory {
         val newRequest = chain.request()
             .newBuilder()
             .url(newUrl)
-            .addHeader("X-Correlation-ID", Constants.APIConstants.X_CORRELATION_ID_VALUE)
+            .addHeader("X-Correlation-ID", "$random")
             .build()
 
         chain.proceed(newRequest)

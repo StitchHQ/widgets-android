@@ -26,6 +26,7 @@ open class SetPinSDKFragment : CardManagementSDKFragment() {
         lateinit var logoutListener: (unAuth: Boolean) -> Unit
         lateinit var savedCardSettings: SavedCardSettings
         lateinit var reFetchSessionToken: (viewType: String) -> Unit
+        lateinit var onSetPinSuccess: () -> Unit
 
         fun newInstance(
             networkListener: () -> Boolean,
@@ -33,6 +34,7 @@ open class SetPinSDKFragment : CardManagementSDKFragment() {
             logoutListener: (unAuth: Boolean) -> Unit,
             savedCardSettings: SavedCardSettings,
             reFetchSessionToken: (viewType: String) -> Unit,
+            onSetPinSuccess: () -> Unit,
         ): SetPinSDKFragment {
             val setPinSDKFragment = SetPinSDKFragment()
             this.networkListener = networkListener
@@ -40,6 +42,7 @@ open class SetPinSDKFragment : CardManagementSDKFragment() {
             this.logoutListener = logoutListener
             this.savedCardSettings = savedCardSettings
             this.reFetchSessionToken = reFetchSessionToken
+            this.onSetPinSuccess = onSetPinSuccess
             return setPinSDKFragment
         }
     }
@@ -71,7 +74,9 @@ open class SetPinSDKFragment : CardManagementSDKFragment() {
         viewModel.reFetchSessionToken = reFetchSessionToken
 
         viewModel.viewType.set(Constants.ViewType.SET_CARD_PIN)
-
+        if (!arguments?.getString(Constants.ParcelConstants.CARD_NUMBER).isNullOrEmpty())
+            viewModel.cardNumber.set(arguments?.getString(Constants.ParcelConstants.CARD_NUMBER))
+        viewModel.showCardSetPin.set(true)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             setSDKData(
                 arguments?.getParcelable(Constants.ParcelConstants.SDK_DATA, SDKData::class.java),
@@ -92,6 +97,7 @@ open class SetPinSDKFragment : CardManagementSDKFragment() {
             viewModel.pin.set("")
             viewModel.confirmPin.set("")
             Toast.success(getString(R.string.pin_set_successfully))
+            onSetPinSuccess.invoke()
         }
     }
 
@@ -105,7 +111,7 @@ open class SetPinSDKFragment : CardManagementSDKFragment() {
         viewModel.customerNumber.set(viewModel.sdkData.get()?.customerNumber)
         viewModel.programName.set(viewModel.sdkData.get()?.programName)
         viewModel.secureToken.set(viewModel.sdkData.get()?.secureToken)
-        viewModel.fingerPrint.set(viewModel.sdkData.get()?.fingerPrint)
+        viewModel.fingerPrint.set(viewModel.deviceFingerPrint(requireContext()))
         setFormStyleProperties()
     }
 
@@ -144,13 +150,27 @@ open class SetPinSDKFragment : CardManagementSDKFragment() {
         if (viewModel.savedCardSettings.get()?.fontFamily != null) {
             viewModel.cardStyleFontFamily.set(viewModel.savedCardSettings.get()?.fontFamily)
         } else {
-            viewModel.cardStyleFontFamily.set(R.font.euclid_flex_regular)
+            viewModel.cardStyleFontFamily.set(R.font.inter_regular)
         }
         if (viewModel.savedCardSettings.get()?.fontColor != null) {
             viewModel.cardStyleFontColor.set(viewModel.savedCardSettings.get()?.fontColor)
         } else {
             viewModel.cardStyleFontColor.set(
-                ContextCompat.getColor(requireContext(), R.color.black)
+                ContextCompat.getColor(requireContext(), R.color.text_color)
+            )
+        }
+        if (viewModel.savedCardSettings.get()?.buttonFontColor != null) {
+            viewModel.cardStyleButtonFontColor.set(viewModel.savedCardSettings.get()?.buttonFontColor)
+        } else {
+            viewModel.cardStyleButtonFontColor.set(
+                ContextCompat.getColor(requireContext(), R.color.white)
+            )
+        }
+        if (viewModel.savedCardSettings.get()?.buttonBackgroundColor != null) {
+            viewModel.cardStyleButtonBackgroundColor.set(viewModel.savedCardSettings.get()?.buttonBackgroundColor)
+        } else {
+            viewModel.cardStyleButtonBackgroundColor.set(
+                ContextCompat.getColor(requireContext(), R.color.colorBase)
             )
         }
         if (viewModel.savedCardSettings.get()?.fontSize != null &&
@@ -160,7 +180,7 @@ open class SetPinSDKFragment : CardManagementSDKFragment() {
                 viewModel.savedCardSettings.get()?.fontSize.toString()
             )
         } else {
-            viewModel.styleFontSize.set("14")
+            viewModel.styleFontSize.set("16")
         }
         setCardData()
     }

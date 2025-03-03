@@ -15,6 +15,7 @@ import com.stitch.cardmanagement.databinding.FragmentResetPinSdkBinding
 import com.stitch.cardmanagement.ui.CardManagementSDKFragment
 import com.stitch.cardmanagement.utilities.Constants
 import com.stitch.cardmanagement.utilities.Toast
+import okhttp3.internal.http.HTTP_BAD_REQUEST
 
 open class ResetPinSDKFragment : CardManagementSDKFragment() {
 
@@ -26,6 +27,8 @@ open class ResetPinSDKFragment : CardManagementSDKFragment() {
         lateinit var logoutListener: (unAuth: Boolean) -> Unit
         lateinit var savedCardSettings: SavedCardSettings
         lateinit var reFetchSessionToken: (viewType: String) -> Unit
+        lateinit var onResetPinSuccess: () -> Unit
+        lateinit var onResetPINError: () -> Unit
 
         fun newInstance(
             networkListener: () -> Boolean,
@@ -33,6 +36,8 @@ open class ResetPinSDKFragment : CardManagementSDKFragment() {
             logoutListener: (unAuth: Boolean) -> Unit,
             savedCardSettings: SavedCardSettings,
             reFetchSessionToken: (viewType: String) -> Unit,
+            onResetPinSuccess: () -> Unit,
+            onResetPINError: () -> Unit,
         ): ResetPinSDKFragment {
             val resetPinSDKFragment = ResetPinSDKFragment()
             this.networkListener = networkListener
@@ -40,6 +45,8 @@ open class ResetPinSDKFragment : CardManagementSDKFragment() {
             this.logoutListener = logoutListener
             this.savedCardSettings = savedCardSettings
             this.reFetchSessionToken = reFetchSessionToken
+            this.onResetPinSuccess = onResetPinSuccess
+            this.onResetPINError = onResetPINError
             return resetPinSDKFragment
         }
     }
@@ -71,7 +78,9 @@ open class ResetPinSDKFragment : CardManagementSDKFragment() {
         viewModel.reFetchSessionToken = reFetchSessionToken
 
         viewModel.viewType.set(Constants.ViewType.RESET_CARD_PIN)
-
+        if (!arguments?.getString(Constants.ParcelConstants.CARD_NUMBER).isNullOrEmpty())
+            viewModel.cardNumber.set(arguments?.getString(Constants.ParcelConstants.CARD_NUMBER))
+        viewModel.showCardResetPin.set(true)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             setSDKData(
                 arguments?.getParcelable(Constants.ParcelConstants.SDK_DATA, SDKData::class.java),
@@ -91,7 +100,14 @@ open class ResetPinSDKFragment : CardManagementSDKFragment() {
             viewModel.getCards()
             viewModel.oldPin.set("")
             viewModel.newPin.set("")
+            viewModel.confirmChangePin.set("")
             Toast.success(getString(R.string.pin_change_successfully))
+            onResetPinSuccess.invoke()
+        }
+        viewModel.onResetPINError = { errorCode, errorMessage ->
+            onResetPINError.invoke()
+            if (errorCode == HTTP_BAD_REQUEST && errorMessage.isNullOrEmpty())
+                Toast.success(getString(R.string.invalid_old_pin_api_response))
         }
     }
 
@@ -105,7 +121,7 @@ open class ResetPinSDKFragment : CardManagementSDKFragment() {
         viewModel.customerNumber.set(viewModel.sdkData.get()?.customerNumber)
         viewModel.programName.set(viewModel.sdkData.get()?.programName)
         viewModel.secureToken.set(viewModel.sdkData.get()?.secureToken)
-        viewModel.fingerPrint.set(viewModel.sdkData.get()?.fingerPrint)
+        viewModel.fingerPrint.set(viewModel.deviceFingerPrint(requireContext()))
         setFormStyleProperties()
     }
 
@@ -144,13 +160,27 @@ open class ResetPinSDKFragment : CardManagementSDKFragment() {
         if (viewModel.savedCardSettings.get()?.fontFamily != null) {
             viewModel.cardStyleFontFamily.set(viewModel.savedCardSettings.get()?.fontFamily)
         } else {
-            viewModel.cardStyleFontFamily.set(R.font.euclid_flex_regular)
+            viewModel.cardStyleFontFamily.set(R.font.inter_regular)
         }
         if (viewModel.savedCardSettings.get()?.fontColor != null) {
             viewModel.cardStyleFontColor.set(viewModel.savedCardSettings.get()?.fontColor)
         } else {
             viewModel.cardStyleFontColor.set(
-                ContextCompat.getColor(requireContext(), R.color.black)
+                ContextCompat.getColor(requireContext(), R.color.text_color)
+            )
+        }
+        if (viewModel.savedCardSettings.get()?.buttonFontColor != null) {
+            viewModel.cardStyleButtonFontColor.set(viewModel.savedCardSettings.get()?.buttonFontColor)
+        } else {
+            viewModel.cardStyleButtonFontColor.set(
+                ContextCompat.getColor(requireContext(), R.color.white)
+            )
+        }
+        if (viewModel.savedCardSettings.get()?.buttonBackgroundColor != null) {
+            viewModel.cardStyleButtonBackgroundColor.set(viewModel.savedCardSettings.get()?.buttonBackgroundColor)
+        } else {
+            viewModel.cardStyleButtonBackgroundColor.set(
+                ContextCompat.getColor(requireContext(), R.color.colorBase)
             )
         }
         if (viewModel.savedCardSettings.get()?.fontSize != null &&
@@ -160,7 +190,7 @@ open class ResetPinSDKFragment : CardManagementSDKFragment() {
                 viewModel.savedCardSettings.get()?.fontSize.toString()
             )
         } else {
-            viewModel.styleFontSize.set("14")
+            viewModel.styleFontSize.set("16")
         }
         setCardData()
     }

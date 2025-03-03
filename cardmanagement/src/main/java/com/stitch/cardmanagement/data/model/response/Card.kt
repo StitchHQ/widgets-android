@@ -7,14 +7,16 @@ import kotlinx.parcelize.Parcelize
 @Parcelize
 data class Card(
     @SerializedName("creationTime")
-    var creationTime: Long? = 0,
+    var creationTime: String? = "",
     @SerializedName("modifiedTime")
-    var modifiedTime: Long? = 0,
+    var modifiedTime: String? = "",
     @SerializedName("cardNumber")
     var cardNumber: String? = "",
-    @SerializedName("panFirst6")
+    @SerializedName("cardId")
+    var cardId: String? = "",
+    @SerializedName("panFirstSix")
     var panFirst6: String? = "",
-    @SerializedName("panLast4")
+    @SerializedName("panLastFour")
     var panLast4: String? = "",
     var type: String? = "",
     var state: String? = "",
@@ -27,15 +29,16 @@ data class Card(
     @SerializedName("reissue")
     var reissue: Boolean? = false,
     var expiry: String? = "",
-    @SerializedName("customerNumber")
+    @SerializedName("customerId")
     var customerNumber: String? = "",
     @SerializedName("embossedName")
     var embossedName: String? = "",
     @SerializedName("programName")
     var programName: String? = "",
+    var cvv2: String? = "",
 ) : Parcelable {
 
     override fun toString(): String {
-        return cardNumber ?: ""
+        return cardId ?: ""
     }
 }

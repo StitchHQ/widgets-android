@@ -1,6 +1,8 @@
 package com.stitch.cardmanagement.ui
 
 import android.content.Context
+import android.os.Build
+import android.provider.Settings
 import android.util.Base64
 import androidx.databinding.ObservableField
 import androidx.lifecycle.MutableLiveData
@@ -25,7 +27,12 @@ import com.stitch.cardmanagement.utilities.validateNewPIN
 import com.stitch.cardmanagement.utilities.validateOldPIN
 import com.stitch.cardmanagement.utilities.validatePIN
 import java.io.File
+import java.math.BigInteger
+import java.net.InetAddress
+import java.net.NetworkInterface
+import java.security.MessageDigest
 import java.security.SecureRandom
+import java.util.Collections
 import javax.crypto.Cipher
 import javax.crypto.SecretKey
 import javax.crypto.spec.IvParameterSpec
@@ -57,6 +64,7 @@ open class CardManagementSDKViewModel : ViewModel() {
     val cardExpiry = ObservableField("")
     val oldPin = ObservableField("")
     val newPin = ObservableField("")
+    val confirmChangePin = ObservableField("")
     val pin = ObservableField("")
     val confirmPin = ObservableField("")
     val cardTypeImage = ObservableField(R.drawable.ic_visa)
@@ -67,6 +75,8 @@ open class CardManagementSDKViewModel : ViewModel() {
 
     val cardStyleFontFamily = ObservableField<Int>()
     val cardStyleFontColor = ObservableField<Int>()
+    val cardStyleButtonFontColor = ObservableField<Int>()
+    val cardStyleButtonBackgroundColor = ObservableField<Int>()
     val styleFontSize = ObservableField("")
     val cardStyleBackground = ObservableField<Any>()
     val cardStyleNumberTopPadding = ObservableField("0")
@@ -98,6 +108,7 @@ open class CardManagementSDKViewModel : ViewModel() {
     lateinit var onSetPINClick: () -> Unit
     lateinit var onActivateCardSuccess: () -> Unit
     lateinit var onResetPINSuccess: () -> Unit
+    lateinit var onResetPINError: (errorCode: Int?, errorMessage: String?) -> Unit
     lateinit var onSetPINSuccess: () -> Unit
 
     lateinit var networkListener: () -> Boolean
@@ -158,8 +169,13 @@ open class CardManagementSDKViewModel : ViewModel() {
         if (viewType.get() == Constants.ViewType.RESET_CARD_PIN) {
             if (oldPin.validateOldPIN(context = context)) return
             if (newPin.validateNewPIN(context = context)) return
+            if (confirmChangePin.validateConfirmPIN(context = context)) return
             if (oldPin.get() == newPin.get()) {
                 Toast.error(context.getString(R.string.invalid_change_pin_mismatch))
+                return
+            }
+            if (newPin.get() != confirmChangePin.get()) {
+                Toast.error(context.getString(R.string.invalid_pin_mismatch))
                 return
             }
         }
@@ -181,11 +197,11 @@ open class CardManagementSDKViewModel : ViewModel() {
                         }
 
                         Constants.ViewType.SET_CARD_PIN -> {
-                            getWidgetSecureSetPIN(it.generatedKey)
+                            getWidgetSecureSetPIN(it.key, it.generatedKey)
                         }
 
                         Constants.ViewType.RESET_CARD_PIN -> {
-                            getWidgetSecureChangePIN(it.generatedKey)
+                            getWidgetSecureChangePIN(it.key, it.generatedKey)
                         }
                     }
                 }
@@ -215,7 +231,7 @@ open class CardManagementSDKViewModel : ViewModel() {
             request = ApiManager.widgetSecureCardAsync(widgetsSecureCardRequest),
             response = {
                 if (it != null) {
-                    accountNumber.set(
+                    /*accountNumber.set(
                         CardUtils.getCardNumber(decrypt(it.accountNumber, generatedKey))
                     )
                     cardExpiry.set(
@@ -224,7 +240,7 @@ open class CardManagementSDKViewModel : ViewModel() {
                     cardCVV.set(decrypt(it.cvv, generatedKey))
                     cardTypeImage.set(
                         CardUtils.getCardType(accountNumber.get() ?: "")
-                    )
+                    )*/
                 }
             },
             errorResponse = { errorCode, errorMessage ->
@@ -276,10 +292,10 @@ open class CardManagementSDKViewModel : ViewModel() {
         )
     }
 
-    private fun getWidgetSecureSetPIN(key: String) {
+    private fun getWidgetSecureSetPIN(key: String, token: String) {
         val widgetsSecureSetPINRequest = WidgetsSecureSetPINRequest(
             pin = encrypt(pin.get() ?: "", key).replace("\n", ""),
-            token = secureToken.get() ?: "", deviceFingerprint = fingerPrint.get() ?: "",
+            token = token, deviceFingerprint = fingerPrint.get() ?: "",
         )
         ApiManager.call(
             toast = false,
@@ -307,11 +323,11 @@ open class CardManagementSDKViewModel : ViewModel() {
         )
     }
 
-    private fun getWidgetSecureChangePIN(key: String) {
+    private fun getWidgetSecureChangePIN(key: String, token: String) {
         val widgetsSecureChangePINRequest = WidgetsSecureChangePINRequest(
             existingPin = encrypt(oldPin.get() ?: "", key).replace("\n", ""),
             pin = encrypt(newPin.get() ?: "", key).replace("\n", ""),
-            token = secureToken.get() ?: "", deviceFingerprint = fingerPrint.get() ?: "",
+            token = token, deviceFingerprint = fingerPrint.get() ?: "",
         )
         ApiManager.call(
             toast = false,
@@ -332,6 +348,7 @@ open class CardManagementSDKViewModel : ViewModel() {
                 } else {
                     Toast.error(errorMessage ?: "")
                 }
+                onResetPINError.invoke(errorCode, errorMessage)
             },
             networkListener = networkListener,
             progressBarListener = progressBarListener,
@@ -362,7 +379,7 @@ open class CardManagementSDKViewModel : ViewModel() {
         val keyBytes = Base64.decode(key, Base64.DEFAULT)
         val secretKey: SecretKey = SecretKeySpec(keyBytes, "AES")
 
-        val ivBytes = ByteArray(16)
+        val ivBytes = ByteArray(12)
         SecureRandom().nextBytes(ivBytes)
         val ivBase64 = Base64.encodeToString(ivBytes, Base64.DEFAULT)
 
@@ -374,5 +391,39 @@ open class CardManagementSDKViewModel : ViewModel() {
         val encryptedText = Base64.encodeToString(encryptedBytes, Base64.DEFAULT)
 
         return "$ivBase64.$encryptedText"
+    }
+
+    fun deviceFingerPrint(context: Context): String {
+        val strIPAddress: String = getIPAddress()
+        val modelName = Build.MODEL
+        val device = Settings.Secure.getString(
+            context.contentResolver,
+            Settings.Secure.ANDROID_ID
+        )
+        val androidVersion = Build.VERSION.RELEASE
+        val deviceFingerPrint = "$strIPAddress : $modelName : $device : $androidVersion"
+        val md = MessageDigest.getInstance("MD5")
+        return BigInteger(1, md.digest(deviceFingerPrint.toByteArray())).toString(16)
+            .padStart(32, '0')
+    }
+
+    private fun getIPAddress(): String {
+        try {
+            val interfaces: List<NetworkInterface> =
+                Collections.list(NetworkInterface.getNetworkInterfaces())
+            for (inter in interfaces) {
+                val addresses: List<InetAddress> = Collections.list(inter.inetAddresses)
+                for (address in addresses) {
+                    if (!address.isLoopbackAddress) {
+                        val sAddress = address.hostAddress
+                        val isIPv4 = (sAddress?.indexOf(':') ?: 0) < 0
+                        if (isIPv4) return sAddress ?: ""
+                    }
+                }
+            }
+        } catch (ignored: Exception) {
+            ignored.printStackTrace()
+        }
+        return ""
     }
 }

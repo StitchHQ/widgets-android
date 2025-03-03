@@ -55,7 +55,7 @@ object ApiManager : ApiHelper {
                             }
                         }
                         errorBody()?.let {
-                            val errorMessage = Gson().fromJson(
+                            val errorMessage: BaseResponse? = Gson().fromJson(
                                 it.string(),
                                 BaseResponse::class.java
                             )
@@ -100,7 +100,7 @@ object ApiManager : ApiHelper {
                         is UnknownHostException -> errorToast(HttpMsg.INTERNAL_SERVER_ERROR + " Please contact admin...")
                         is ConnectException -> errorToast(HttpMsg.CONNECT_ERROR)
                         is CancellationException -> {}
-                        else -> errorToast(e.message.toString())
+//                        else -> errorToast(e.message.toString())
                     }
                 }
                 if (progress) progressBarListener.invoke(false)

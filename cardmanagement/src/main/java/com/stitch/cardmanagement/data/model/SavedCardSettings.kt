@@ -10,6 +10,8 @@ data class SavedCardSettings(
     var widgetStyle: String? = null,
     var fontFamily: Int? = null,
     var fontColor: Int? = null,
+    var buttonFontColor: Int? = null,
+    var buttonBackgroundColor: Int? = null,
     var fontSize: Int? = null,
     var bgImageFile: File? = null,
     var background: @RawValue Any? = null,
@@ -27,4 +29,5 @@ data class SavedCardSettings(
     var cvvEndPadding: Int? = null,
     var isCardNumberMasked: Boolean? = null,
     var isCardCVVMasked: Boolean? = null,
+    var isEyeButton: Boolean? = null,
 ) : Parcelable

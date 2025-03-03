@@ -8,9 +8,9 @@
     <string name="placeholder_card_number_mandatory">Card Number*</string>
     <string name="placeholder_card_cvv">Card CVV*</string>
     <string name="placeholder_four_digit_pin">4 Digit PIN*</string>
-    <string name="placeholder_confirm_pin">Confirm PIN*</string>
-    <string name="placeholder_four_digit_old_pin">4 Digit Old PIN*</string>
-    <string name="placeholder_new_pin">New PIN*</string>
+    <string name="placeholder_set_confirm_pin">Confirm PIN*</string>
+    <string name="placeholder_enter_four_digit_pin">Enter 4-Digit PIN</string>
+    <string name="placeholder_re_enter_four_digit_pin">Re-enter 4-Digit PIN</string>
 
     <string name="invalid_cvv">CVV is required.</string>
     <string name="invalid_pin">PIN is required.</string>
@@ -19,13 +19,14 @@
     <string name="invalid_old_pin">Old PIN is required.</string>
     <string name="invalid_new_pin">New PIN is required.</string>
     <string name="invalid_change_pin_mismatch">Old Pin and New Pin must be different.</string>
+    <string name="invalid_old_pin_api_response">Invalid Old PIN</string>
 
     <string name="card_activated">Card is in Activated State</string>
     <string name="card_not_activated">Card not in Activated State</string>
     <string name="card_invalid">Card is in Invalid State</string>
 
     <string name="card_number_required">Card Number (required)*</string>
-    <string name="pin_required">PIN (required)*</string>
+    <string name="pin_required">PIN (Required)</string>
     <string name="set_pin">Set Pin</string>
 
     <string name="cards">Card List</string>
@@ -60,6 +61,15 @@
     <string name="expiration">Expiration</string>
     <string name="cvv">Cvv</string>
 
-    <string name="masked_card_number">XXXX-XXXX-XXXX-XXXX</string>
+    <string name="mask_demo_card">XXXX XXXX XXXX</string>
+    <string name="masked_card_number">XXXX XXXX XXXX XXXX</string>
     <string name="masked_card_cvv">XXX</string>
+    <string name="valid_thru">Valid thru</string>
+    <string name="your_cards">Your cards</string>
+    <string name="set_your_card_pin">Set your card pin</string>
+    <string name="manage_your_card_pin">Manage your card pin</string>
+
+    <string name="current_pin">Current PIN</string>
+    <string name="new_pin">New PIN</string>
+    <string name="confirm_new_pin">Confirm New PIN</string>
 </resources>
