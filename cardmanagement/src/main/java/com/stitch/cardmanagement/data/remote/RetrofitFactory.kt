@@ -4,6 +4,7 @@ import com.google.gson.FieldNamingPolicy
 import com.google.gson.GsonBuilder
 import com.jakewharton.retrofit2.adapter.kotlin.coroutines.CoroutineCallAdapterFactory
 import com.stitch.cardmanagement.BuildConfig
+import com.stitch.cardmanagement.WidgetSDK
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -81,14 +82,14 @@ object RetrofitFactory {
 
     private fun retrofit(): Retrofit = Retrofit.Builder()
         .client(client)
-        .baseUrl(BuildConfig.BASE_URL)
+        .baseUrl(WidgetSDK.baseUrl)
         .addConverterFactory(GsonConverterFactory.create(gson))
         .addCallAdapterFactory(CoroutineCallAdapterFactory())
         .build()
 
     private fun retrofitWidget(): Retrofit = Retrofit.Builder()
         .client(clientWidget)
-        .baseUrl(BuildConfig.BASE_URL)
+        .baseUrl(WidgetSDK.baseUrl)
         .addConverterFactory(GsonConverterFactory.create(gson))
         .addCallAdapterFactory(CoroutineCallAdapterFactory())
         .build()

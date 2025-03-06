@@ -11,18 +11,19 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import com.bumptech.glide.Glide
 import com.stitch.cardmanagement.R
+import com.stitch.cardmanagement.WidgetSDK
 import com.stitch.cardmanagement.data.model.SavedCardSettings
-import com.stitch.cardmanagement.databinding.FragmentCardBottomSheetBinding
+import com.stitch.cardmanagement.databinding.WidgetCardBinding
 
-class CardBottomSheetFragment : Fragment() {
-    private lateinit var binding: FragmentCardBottomSheetBinding
-    private val viewModel: CardBottomSheetViewModel by viewModels()
+class CardWidget : Fragment() {
+    private lateinit var binding: WidgetCardBinding
+    private val viewModel: CardWidgetViewModel by viewModels()
+    private lateinit var savedCardSettings: SavedCardSettings
 
     companion object {
         lateinit var networkListener: () -> Boolean
         lateinit var progressBarListener: (isVisible: Boolean) -> Unit
         lateinit var logoutListener: (unAuth: Boolean) -> Unit
-        lateinit var savedCardSettings: SavedCardSettings
         private lateinit var reFetchSessionToken: (viewType: String) -> Unit
         lateinit var secureToken: String
 
@@ -30,19 +31,22 @@ class CardBottomSheetFragment : Fragment() {
             networkListener: () -> Boolean,
             progressBarListener: (isVisible: Boolean) -> Unit,
             logoutListener: (unAuth: Boolean) -> Unit,
-            savedCardSettings: SavedCardSettings,
             reFetchSessionToken: (viewType: String) -> Unit,
             secureToken: String,
-        ): CardBottomSheetFragment {
-            val cardBottomSheetFragment = CardBottomSheetFragment()
+        ): CardWidget {
+            val cardWidget = CardWidget()
             this.networkListener = networkListener
             this.progressBarListener = progressBarListener
             this.logoutListener = logoutListener
-            this.savedCardSettings = savedCardSettings
             this.reFetchSessionToken = reFetchSessionToken
             this.secureToken = secureToken
-            return cardBottomSheetFragment
+            return cardWidget
         }
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        savedCardSettings = WidgetSDK.viewCardSettings
     }
 
     override fun onCreateView(
@@ -53,7 +57,7 @@ class CardBottomSheetFragment : Fragment() {
             binding =
                 DataBindingUtil.inflate(
                     inflater,
-                    R.layout.fragment_card_bottom_sheet,
+                    R.layout.widget_card,
                     container,
                     false
                 )
@@ -70,8 +74,8 @@ class CardBottomSheetFragment : Fragment() {
         viewModel.logoutListener = logoutListener
 
         viewModel.secureToken = secureToken
-        val deviceFingerPrint: String = viewModel.deviceFingerPrint(requireContext())
-        viewModel.getWidgetSecureSessionKey(deviceFingerPrint)
+        val deviceFingerprint: String = viewModel.deviceFingerprint(requireContext())
+        viewModel.getWidgetSecureSessionKey(deviceFingerprint)
         setCardStyleProperties()
         viewModel.setCardData = {
             binding.layoutDemoCard.tvCardNumber.text =

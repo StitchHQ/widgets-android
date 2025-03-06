@@ -2,23 +2,26 @@ package com.stitch.cardmanagement.data.remote
 
 import com.google.gson.Gson
 import com.stitch.cardmanagement.data.model.BaseResponse
-import com.stitch.cardmanagement.data.model.request.CommonGetRequest
-import com.stitch.cardmanagement.data.model.request.WidgetsSecureActivateCardRequest
 import com.stitch.cardmanagement.data.model.request.WidgetsSecureCardRequest
 import com.stitch.cardmanagement.data.model.request.WidgetsSecureChangePINRequest
 import com.stitch.cardmanagement.data.model.request.WidgetsSecureSessionKeyRequest
 import com.stitch.cardmanagement.data.model.request.WidgetsSecureSetPINRequest
-import com.stitch.cardmanagement.data.model.response.Card
 import com.stitch.cardmanagement.data.model.response.WidgetsSecureCardResponse
 import com.stitch.cardmanagement.data.model.response.WidgetsSecureSessionKeyResponse
 import com.stitch.cardmanagement.utilities.Toast
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Deferred
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.cancelChildren
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import okhttp3.ResponseBody
 import retrofit2.Response
 import java.net.ConnectException
 import java.net.SocketTimeoutException
 import java.net.UnknownHostException
-import com.stitch.cardmanagement.data.remote.RetrofitFactory.api as Api
 import com.stitch.cardmanagement.data.remote.RetrofitFactory.apiWidget as ApiWidget
 import com.stitch.cardmanagement.utilities.Networking.HttpErrorMessage as HttpMsg
 import com.stitch.cardmanagement.utilities.Networking.InternalHttpCode.Companion as HttpCode
@@ -117,23 +120,31 @@ object ApiManager : ApiHelper {
 
     private fun errorToast(error: String) = Toast.error(error)
 
-    override fun cardsAsync(
-        commonGetRequest: CommonGetRequest, auth: String
-    ): Deferred<Response<List<Card>>> =
-        Api.cardsAsync(commonGetRequest, auth)
+    override fun widgetSecureSessionKeyAsync(
+        widgetsSecureSessionKeyRequest: WidgetsSecureSessionKeyRequest
+    ): Deferred<Response<WidgetsSecureSessionKeyResponse>> =
+        ApiWidget.widgetSecureSessionKeyAsync(
+            widgetsSecureSessionKeyRequest
+        )
 
-    override fun widgetSecureSessionKeyAsync(widgetsSecureSessionKeyRequest: WidgetsSecureSessionKeyRequest): Deferred<Response<WidgetsSecureSessionKeyResponse>> =
-        ApiWidget.widgetSecureSessionKeyAsync(widgetsSecureSessionKeyRequest)
+    override fun widgetSecureCardAsync(
+        widgetsSecureCardRequest: WidgetsSecureCardRequest
+    ): Deferred<Response<WidgetsSecureCardResponse>> =
+        ApiWidget.widgetSecureCardAsync(
+            widgetsSecureCardRequest
+        )
 
-    override fun widgetSecureCardAsync(widgetsSecureCardRequest: WidgetsSecureCardRequest): Deferred<Response<WidgetsSecureCardResponse>> =
-        ApiWidget.widgetSecureCardAsync(widgetsSecureCardRequest)
+    override fun widgetSecureSetPINAsync(
+        widgetsSecureSetPINRequest: WidgetsSecureSetPINRequest
+    ): Deferred<Response<ResponseBody>> =
+        ApiWidget.widgetSecureSetPINAsync(
+            widgetsSecureSetPINRequest
+        )
 
-    override fun widgetSecureActivateCardAsync(widgetsSecureActivateCardRequest: WidgetsSecureActivateCardRequest): Deferred<Response<ResponseBody>> =
-        ApiWidget.widgetSecureActivateCardAsync(widgetsSecureActivateCardRequest)
-
-    override fun widgetSecureSetPINAsync(widgetsSecureSetPINRequest: WidgetsSecureSetPINRequest): Deferred<Response<ResponseBody>> =
-        ApiWidget.widgetSecureSetPINAsync(widgetsSecureSetPINRequest)
-
-    override fun widgetSecureChangePINAsync(widgetsSecureChangePINRequest: WidgetsSecureChangePINRequest): Deferred<Response<ResponseBody>> =
-        ApiWidget.widgetSecureChangePINAsync(widgetsSecureChangePINRequest)
+    override fun widgetSecureChangePINAsync(
+        widgetsSecureChangePINRequest: WidgetsSecureChangePINRequest
+    ): Deferred<Response<ResponseBody>> =
+        ApiWidget.widgetSecureChangePINAsync(
+            widgetsSecureChangePINRequest
+        )
 }
