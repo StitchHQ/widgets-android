@@ -14,6 +14,7 @@ import com.stitch.cardmanagement.R
 import com.stitch.cardmanagement.WidgetSDK
 import com.stitch.cardmanagement.data.model.SavedCardSettings
 import com.stitch.cardmanagement.databinding.WidgetCardBinding
+import com.stitch.cardmanagement.utilities.Utils
 
 class CardWidget : Fragment() {
     private lateinit var binding: WidgetCardBinding
@@ -74,7 +75,7 @@ class CardWidget : Fragment() {
         viewModel.logoutListener = logoutListener
 
         viewModel.secureToken = secureToken
-        val deviceFingerprint: String = viewModel.deviceFingerprint(requireContext())
+        val deviceFingerprint: String = Utils.deviceFingerprint(requireContext())
         viewModel.getWidgetSecureSessionKey(deviceFingerprint)
         setCardStyleProperties()
         viewModel.setCardData = {
