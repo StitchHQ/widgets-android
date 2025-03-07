@@ -6,6 +6,7 @@ import android.content.pm.PackageManager
 import android.os.Build
 import android.provider.Settings
 import android.view.inputmethod.InputMethodManager
+import android.widget.Toast
 import java.io.File
 import java.math.BigInteger
 import java.net.InetAddress
@@ -27,6 +28,28 @@ object Utils {
                 it.windowToken, InputMethodManager.HIDE_NOT_ALWAYS
             )
         }
+    }
+
+    fun isDeviceRooted(context: Context): Boolean {
+        val isDeviceRooted =
+            isRootedBySuBinary() || isRootedByRootManagementApps(context) || isRootedByTestKeys() || isRootedByWritableSystem()
+        try {
+            if (isDeviceRooted) {
+                // Throw the custom exception immediately if a rooted device is detected
+                throw CardSDKException(
+                    CardSDKException.INSECURE_ENVIRONMENT_MESSAGE,
+                    CardSDKException.INSECURE_ENVIRONMENT
+                )
+            }
+        } catch (e: CardSDKException) {
+            e.printStackTrace()
+            Toast.makeText(
+                context,
+                CardSDKException.INSECURE_ENVIRONMENT_MESSAGE,
+                Toast.LENGTH_SHORT
+            ).show()
+        }
+        return false
     }
 
     fun deviceFingerprint(context: Context): String {
@@ -61,10 +84,6 @@ object Utils {
             ignored.printStackTrace()
         }
         return ""
-    }
-
-    fun isDeviceRooted(context: Context): Boolean {
-        return isRootedBySuBinary() || isRootedByRootManagementApps(context) || isRootedByTestKeys() || isRootedByWritableSystem()
     }
 
     private fun isRootedBySuBinary(): Boolean {
