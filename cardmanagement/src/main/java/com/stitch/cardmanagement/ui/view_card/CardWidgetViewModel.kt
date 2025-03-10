@@ -1,8 +1,5 @@
 package com.stitch.cardmanagement.ui.view_card
 
-import android.content.Context
-import android.os.Build
-import android.provider.Settings
 import android.util.Base64
 import androidx.databinding.ObservableField
 import androidx.lifecycle.ViewModel
@@ -11,12 +8,7 @@ import com.stitch.cardmanagement.data.model.request.WidgetsSecureSessionKeyReque
 import com.stitch.cardmanagement.data.model.response.Card
 import com.stitch.cardmanagement.data.remote.ApiManager
 import com.stitch.cardmanagement.utilities.CardUtils
-import java.math.BigInteger
-import java.net.InetAddress
-import java.net.NetworkInterface
-import java.security.MessageDigest
 import java.text.SimpleDateFormat
-import java.util.Collections
 import java.util.Locale
 import javax.crypto.Cipher
 import javax.crypto.SecretKey
