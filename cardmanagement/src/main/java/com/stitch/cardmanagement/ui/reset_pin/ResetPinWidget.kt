@@ -11,7 +11,6 @@ import com.stitch.cardmanagement.R
 import com.stitch.cardmanagement.WidgetSDK
 import com.stitch.cardmanagement.data.model.SDKData
 import com.stitch.cardmanagement.data.model.SavedCardSettings
-import com.stitch.cardmanagement.data.model.response.Card
 import com.stitch.cardmanagement.databinding.WidgetResetPinBinding
 import com.stitch.cardmanagement.ui.StitchWidget
 import com.stitch.cardmanagement.utilities.Constants
@@ -129,38 +128,12 @@ open class ResetPinWidget : StitchWidget() {
         setFormStyleProperties()
     }
 
-    fun setCardStyle(
-        cardsList: ArrayList<Card>?,
-        style: String,
-        savedCardSettings: SavedCardSettings
-    ) {
-        viewModel.card.set(cardsList?.find { card ->
-            card.cardNumber == viewModel.cardNumber.get()
-        })
-        viewModel.sdkData.get()?.card = viewModel.card.get()
-        viewModel.savedCardSettings.set(savedCardSettings)
-        viewModel.oldPin.set("")
-        viewModel.newPin.set("")
-        binding.layoutOutlined.root.visibility = View.GONE
-        binding.layoutFilled.root.visibility = View.GONE
-        binding.layoutStandard.root.visibility = View.GONE
-        when (style) {
-            getString(R.string.style_outlined) -> {
-                binding.layoutOutlined.root.visibility = View.VISIBLE
-            }
-
-            getString(R.string.style_filled) -> {
-                binding.layoutFilled.root.visibility = View.VISIBLE
-            }
-
-            getString(R.string.style_standard) -> {
-                binding.layoutStandard.root.visibility = View.VISIBLE
-            }
-        }
-        setFormStyleProperties()
-    }
-
     private fun setFormStyleProperties() {
+        if (viewModel.savedCardSettings.get()?.textFieldVariant != null) {
+            viewModel.styleSheetType.set(viewModel.savedCardSettings.get()?.textFieldVariant)
+        } else {
+            viewModel.styleSheetType.set(getString(R.string.style_outlined))
+        }
         if (viewModel.savedCardSettings.get()?.fontFamily != null) {
             viewModel.cardStyleFontFamily.set(viewModel.savedCardSettings.get()?.fontFamily)
         } else {
@@ -180,8 +153,8 @@ open class ResetPinWidget : StitchWidget() {
                 ContextCompat.getColor(requireContext(), R.color.white)
             )
         }
-        if (viewModel.savedCardSettings.get()?.buttonBackgroundColor != null) {
-            viewModel.cardStyleButtonBackgroundColor.set(viewModel.savedCardSettings.get()?.buttonBackgroundColor)
+        if (viewModel.savedCardSettings.get()?.buttonBackground != null) {
+            viewModel.cardStyleButtonBackgroundColor.set(viewModel.savedCardSettings.get()?.buttonBackground)
         } else {
             viewModel.cardStyleButtonBackgroundColor.set(
                 ContextCompat.getColor(requireContext(), R.color.colorBase)
@@ -196,13 +169,37 @@ open class ResetPinWidget : StitchWidget() {
         } else {
             viewModel.styleFontSize.set("16")
         }
+        binding.layoutOutlined.root.visibility = View.GONE
+        binding.layoutFilled.root.visibility = View.GONE
+        binding.layoutStandard.root.visibility = View.GONE
+        setCardStyle(viewModel.styleSheetType.get() ?: getString(R.string.style_outlined))
+    }
+
+    private fun setCardStyle(
+        style: String,
+    ) {
+        binding.layoutOutlined.root.visibility = View.GONE
+        binding.layoutFilled.root.visibility = View.GONE
+        binding.layoutStandard.root.visibility = View.GONE
+        when (style) {
+            getString(R.string.style_outlined) -> {
+                binding.layoutOutlined.root.visibility = View.VISIBLE
+            }
+
+            getString(R.string.style_filled) -> {
+                binding.layoutFilled.root.visibility = View.VISIBLE
+            }
+
+            getString(R.string.style_standard) -> {
+                binding.layoutStandard.root.visibility = View.VISIBLE
+            }
+        }
         setCardData()
     }
 
     private fun setCardData() {
         if (viewModel.card.get() != null) {
             viewModel.showCardResetPin.set(true)
-            viewModel.isCardNotActivate.set(viewModel.card.get()?.state != Constants.CardState.ACTIVATED)
             viewModel.cardNumber.set(viewModel.card.get()?.cardNumber)
         }
     }

@@ -61,7 +61,7 @@ object Utils {
         )
         val androidVersion = Build.VERSION.RELEASE
         val deviceFingerprint = "$strIPAddress : $modelName : $device : $androidVersion"
-        val md = MessageDigest.getInstance("MD5")
+        val md = MessageDigest.getInstance("SHA256")
         return BigInteger(1, md.digest(deviceFingerprint.toByteArray())).toString(16)
             .padStart(32, '0')
     }
@@ -125,7 +125,7 @@ object Utils {
     }
 
     private fun isRootedByTestKeys(): Boolean {
-        val buildTags = android.os.Build.TAGS
+        val buildTags = Build.TAGS
         return buildTags != null && buildTags.contains("test-keys")
     }
 
