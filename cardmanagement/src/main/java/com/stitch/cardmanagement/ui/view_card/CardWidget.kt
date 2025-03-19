@@ -95,6 +95,7 @@ class CardWidget : Fragment() {
         val deviceFingerprint: String = Utils.getDeviceFingerprint(requireContext())
         viewModel.getWidgetSecureSessionKey(deviceFingerprint)
         setCardStyleProperties()
+        viewModel.isDeviceRooted.set(Utils.isDeviceRooted(requireContext()))
         viewModel.setCardData = {
             setCardDataFromAPIResponse()
         }
@@ -269,63 +270,63 @@ class CardWidget : Fragment() {
 
     private fun setWidgetFontSize() {
         binding.layoutDemoCard.tvCardProfileName.setWidgetFontSize(
-            savedCardSettings.fontSize.toString(),
-            16f
+            savedCardSettings.fontSize,
+            16
         )
         binding.layoutDemoCard.tvCardExpiry.setWidgetFontSize(
-            savedCardSettings.fontSize.toString(),
-            16f
+            savedCardSettings.fontSize,
+            16
         )
         binding.layoutDemoCard.tvCardCVV.setWidgetFontSize(
-            savedCardSettings.fontSize.toString(),
-            16f
+            savedCardSettings.fontSize,
+            16
         )
         binding.layoutDemoCard.tvCardNumber.setWidgetFontSize(
-            savedCardSettings.fontSize.toString(),
-            24f
+            savedCardSettings.fontSize,
+            24
         )
     }
 
     private fun setWidgetCardNumberPadding() {
         binding.layoutDemoCard.numberTopPadding =
-            getWidgetPadding(savedCardSettings.cardNumberPaddingTop.toString(), "0")
+            getWidgetPadding(savedCardSettings.cardNumberPaddingTop, 0)
 
         binding.layoutDemoCard.numberBottomPadding =
-            getWidgetPadding(savedCardSettings.cardNumberPaddingBottom.toString(), "0")
+            getWidgetPadding(savedCardSettings.cardNumberPaddingBottom, 0)
 
         binding.layoutDemoCard.numberLeftPadding =
-            getWidgetPadding(savedCardSettings.cardNumberPaddingLeft.toString(), "0")
+            getWidgetPadding(savedCardSettings.cardNumberPaddingLeft, 0)
 
         binding.layoutDemoCard.numberRightPadding =
-            getWidgetPadding(savedCardSettings.cardNumberPaddingRight.toString(), "0")
+            getWidgetPadding(savedCardSettings.cardNumberPaddingRight, 0)
     }
 
     private fun setWidgetExpiryPadding() {
         binding.layoutDemoCard.expiryTopPadding =
-            getWidgetPadding(savedCardSettings.expiryPaddingTop.toString(), "0")
+            getWidgetPadding(savedCardSettings.expiryPaddingTop, 0)
 
         binding.layoutDemoCard.expiryBottomPadding =
-            getWidgetPadding(savedCardSettings.expiryPaddingBottom.toString(), "0")
+            getWidgetPadding(savedCardSettings.expiryPaddingBottom, 0)
 
         binding.layoutDemoCard.expiryLeftPadding =
-            getWidgetPadding(savedCardSettings.expiryPaddingLeft.toString(), "0")
+            getWidgetPadding(savedCardSettings.expiryPaddingLeft, 0)
 
         binding.layoutDemoCard.expiryRightPadding =
-            getWidgetPadding(savedCardSettings.expiryPaddingRight.toString(), "0")
+            getWidgetPadding(savedCardSettings.expiryPaddingRight, 0)
     }
 
     private fun setWidgetCVVPadding() {
         binding.layoutDemoCard.cvvTopPadding =
-            getWidgetPadding(savedCardSettings.cvvPaddingTop.toString(), "0")
+            getWidgetPadding(savedCardSettings.cvvPaddingTop, 0)
 
         binding.layoutDemoCard.cvvBottomPadding =
-            getWidgetPadding(savedCardSettings.cvvPaddingBottom.toString(), "0")
+            getWidgetPadding(savedCardSettings.cvvPaddingBottom, 0)
 
         binding.layoutDemoCard.cvvLeftPadding =
-            getWidgetPadding(savedCardSettings.cvvPaddingLeft.toString(), "0")
+            getWidgetPadding(savedCardSettings.cvvPaddingLeft, 0)
 
         binding.layoutDemoCard.cvvRightPadding =
-            getWidgetPadding(savedCardSettings.cvvPaddingRight.toString(), "0")
+            getWidgetPadding(savedCardSettings.cvvPaddingRight, 0)
     }
 
     private fun setCardMedia() {

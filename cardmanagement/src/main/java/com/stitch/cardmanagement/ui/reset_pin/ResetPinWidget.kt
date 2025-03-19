@@ -84,7 +84,6 @@ open class ResetPinWidget : StitchWidget() {
         viewModel.viewType.set(Constants.ViewType.RESET_CARD_PIN)
         if (!arguments?.getString(Constants.ParcelConstants.CARD_NUMBER).isNullOrEmpty())
             viewModel.cardNumber.set(arguments?.getString(Constants.ParcelConstants.CARD_NUMBER))
-        viewModel.showCardResetPin.set(true)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             setSDKData(
                 arguments?.getParcelable(Constants.ParcelConstants.SDK_DATA, SDKData::class.java),
@@ -96,6 +95,7 @@ open class ResetPinWidget : StitchWidget() {
                 savedCardSettings
             )
         }
+        viewModel.isDeviceRooted.set(Utils.isDeviceRooted(requireContext()))
         viewModel.onResetPINClick = {
             viewModel.retryCount.set(0)
             viewModel.getWidgetsSecureSessionKey(requireContext())
@@ -199,7 +199,6 @@ open class ResetPinWidget : StitchWidget() {
 
     private fun setCardData() {
         if (viewModel.card.get() != null) {
-            viewModel.showCardResetPin.set(true)
             viewModel.cardNumber.set(viewModel.card.get()?.cardNumber)
         }
     }
