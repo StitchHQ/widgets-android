@@ -164,7 +164,8 @@ class CardWidget : Fragment() {
         if (viewModel.isCardCVVMaskEnabled.get() == null || viewModel.isCardCVVMaskEnabled.get() == true) {
             viewModel.isCardCVVMasked.set(!(viewModel.isCardCVVMasked.get() ?: true))
             handleCVVEyeImage()
-            cvv(viewModel.isCardCVVMasked.get() != null && viewModel.isCardCVVMasked.get() != false)
+            binding.layoutDemoCard.tvCardCVV.text =
+                cvv(viewModel.isCardCVVMasked.get() != null && viewModel.isCardCVVMasked.get() != false)
         }
     }
 
