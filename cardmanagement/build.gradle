@@ -8,14 +8,14 @@ plugins {
 
 android {
     namespace 'com.stitch.cardmanagement'
-    compileSdk 34
+    compileSdk 35
 
     buildFeatures {
         dataBinding = true
     }
     defaultConfig {
         minSdk 24
-        targetSdk 34
+        targetSdk 35
         multiDexEnabled true
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
@@ -35,36 +35,83 @@ android {
         jvmTarget = '17'
     }
     android.buildFeatures.buildConfig true
+    publishing {
+        singleVariant("release") {
+            withSourcesJar()
+        }
+    }
 }
 
 dependencies {
 
-    implementation 'androidx.core:core-ktx:1.12.0'
-    implementation 'androidx.fragment:fragment-ktx:1.6.1'
-    implementation 'androidx.appcompat:appcompat:1.6.1'
-    implementation 'com.google.android.material:material:1.10.0'
+    implementation 'androidx.core:core-ktx:1.15.0'
+    implementation 'androidx.fragment:fragment-ktx:1.8.6'
+    implementation 'androidx.appcompat:appcompat:1.7.0'
+    implementation 'com.google.android.material:material:1.12.0'
     implementation 'androidx.lifecycle:lifecycle-extensions:2.2.0'
-    implementation 'androidx.lifecycle:lifecycle-livedata-ktx:2.6.2'
-    implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.6.2'
-    implementation 'com.google.code.gson:gson:2.10.1'
+    implementation 'androidx.lifecycle:lifecycle-livedata-ktx:2.8.7'
+    implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.8.7'
+    implementation 'com.google.code.gson:gson:2.12.1'
 
     //Glide
     implementation 'com.github.bumptech.glide:glide:4.16.0'
     kapt 'com.github.bumptech.glide:compiler:4.16.0'
 
     //Retrofit
-    implementation 'com.squareup.retrofit2:retrofit:2.9.0'
-    implementation 'com.squareup.retrofit2:converter-gson:2.9.0'
-    implementation 'com.squareup.okhttp3:logging-interceptor:5.0.0-alpha.9'
-    implementation 'com.squareup.okio:okio:3.6.0'
+    implementation 'com.squareup.retrofit2:retrofit:2.11.0'
+    implementation 'com.squareup.retrofit2:converter-gson:2.11.0'
+    implementation 'com.squareup.okhttp3:logging-interceptor:5.0.0-alpha.14'
+    implementation 'com.squareup.okio:okio:3.10.2'
 
     //Coroutine
     implementation 'com.jakewharton.retrofit:retrofit2-kotlin-coroutines-adapter:0.9.2'
 
     testImplementation 'junit:junit:4.13.2'
-    androidTestImplementation 'androidx.test.ext:junit:1.1.5'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
+    androidTestImplementation 'androidx.test.ext:junit:1.2.1'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.6.1'
 }
+afterEvaluate {
+    publishing {
+        publications {
+            release(MavenPublication) {
+                from(components["release"])
+                groupId = "sa.stitch"
+                artifactId = "card-management"
+                version = "1.0.0"
+
+                pom {
+                    packaging = "aar"
+                    name.set("card-management")
+                    description.set("card-management: Library for Card Management")
+                    url.set("https://github.com/StitchHQ/widgets-android.git")
+                    inceptionYear.set("2025")
+
+                    licenses {
+                        license {
+                            name.set("MIT License")
+                            url.set("https://opensource.org/licenses/MIT")
+                        }
+                    }
+
+                    developers {
+                        developer {
+                            id.set("Kathirsethu")
+                            name.set("Kathir")
+                            email.set("kathir93sethu@gmail.com")
+                        }
+                    }
+
+                    scm {
+                        connection.set("scm:git@github.com:StitchHQ/widgets-android")
+                        developerConnection.set("scm:git@github.com:StitchHQ/widgets-android.git")
+                        url.set("https://github.com/StitchHQ/widgets-android.git")
+                    }
+                }
+            }
+        }
+    }
+}
+/*
 afterEvaluate {
     publishing {
         publications {
@@ -76,4 +123,4 @@ afterEvaluate {
             }
         }
     }
-}
+}*/

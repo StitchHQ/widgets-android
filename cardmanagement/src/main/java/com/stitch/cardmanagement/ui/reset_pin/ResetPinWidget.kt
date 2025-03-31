@@ -14,9 +14,9 @@ import com.stitch.cardmanagement.data.model.SavedCardSettings
 import com.stitch.cardmanagement.databinding.WidgetResetPinBinding
 import com.stitch.cardmanagement.ui.StitchWidget
 import com.stitch.cardmanagement.utilities.Constants
+import com.stitch.cardmanagement.utilities.Networking
 import com.stitch.cardmanagement.utilities.Toast
 import com.stitch.cardmanagement.utilities.Utils
-import okhttp3.internal.http.HTTP_BAD_REQUEST
 
 open class ResetPinWidget : StitchWidget() {
 
@@ -109,7 +109,7 @@ open class ResetPinWidget : StitchWidget() {
         }
         viewModel.onResetPINError = { errorCode, errorMessage ->
             onResetPINError.invoke()
-            if (errorCode == HTTP_BAD_REQUEST && errorMessage.isNullOrEmpty())
+            if (errorCode == Networking.InternalHttpCode.BAD_REQUEST && errorMessage.isNullOrEmpty())
                 Toast.success(getString(R.string.invalid_old_pin_api_response))
         }
     }
