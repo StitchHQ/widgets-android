@@ -13,6 +13,7 @@ import com.stitch.cardmanagement.R
 import com.stitch.cardmanagement.WidgetSDK
 import com.stitch.cardmanagement.data.model.SavedCardSettings
 import com.stitch.cardmanagement.databinding.WidgetCardBinding
+import com.stitch.cardmanagement.utilities.CardSDKException
 import com.stitch.cardmanagement.utilities.CardUtils.getWidgetPadding
 import com.stitch.cardmanagement.utilities.CardUtils.setWidgetFontSize
 import com.stitch.cardmanagement.utilities.CardUtils.setWidgetTextColor
@@ -95,7 +96,7 @@ class CardWidget : Fragment() {
         val deviceFingerprint: String = Utils.getDeviceFingerprint(requireContext())
         viewModel.getWidgetSecureSessionKey(deviceFingerprint)
         setCardStyleProperties()
-        viewModel.isDeviceRooted.set(Utils.isDeviceRooted(requireContext()))
+        viewModel.isDeviceRooted.set(Utils.isDeviceRooted(requireContext()) == CardSDKException.INSECURE_ENVIRONMENT)
         viewModel.setCardData = {
             setCardDataFromAPIResponse()
         }

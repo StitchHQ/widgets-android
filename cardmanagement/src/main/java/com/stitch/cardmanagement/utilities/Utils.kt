@@ -6,7 +6,6 @@ import android.content.pm.PackageManager
 import android.os.Build
 import android.provider.Settings
 import android.view.inputmethod.InputMethodManager
-import android.widget.Toast
 import java.io.File
 import java.math.BigInteger
 import java.net.InetAddress
@@ -30,7 +29,7 @@ object Utils {
         }
     }
 
-    fun isDeviceRooted(context: Context): Boolean {
+    fun isDeviceRooted(context: Context): Int {
         val isDeviceRooted =
             isRootedBySuBinary() || isRootedByRootManagementApps(context) || isRootedByTestKeys() || isRootedByWritableSystem()
         try {
@@ -43,13 +42,9 @@ object Utils {
             }
         } catch (e: CardSDKException) {
             e.printStackTrace()
-            Toast.makeText(
-                context,
-                CardSDKException.INSECURE_ENVIRONMENT_MESSAGE,
-                Toast.LENGTH_SHORT
-            ).show()
+            return CardSDKException.INSECURE_ENVIRONMENT;
         }
-        return false
+        return -1
     }
 
     fun getDeviceFingerprint(context: Context): String {

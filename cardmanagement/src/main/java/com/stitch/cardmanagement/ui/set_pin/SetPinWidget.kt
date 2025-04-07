@@ -13,6 +13,7 @@ import com.stitch.cardmanagement.data.model.SDKData
 import com.stitch.cardmanagement.data.model.SavedCardSettings
 import com.stitch.cardmanagement.databinding.WidgetSetPinBinding
 import com.stitch.cardmanagement.ui.StitchWidget
+import com.stitch.cardmanagement.utilities.CardSDKException
 import com.stitch.cardmanagement.utilities.Constants
 import com.stitch.cardmanagement.utilities.Toast
 import com.stitch.cardmanagement.utilities.Utils
@@ -91,7 +92,7 @@ open class SetPinWidget : StitchWidget() {
                 savedCardSettings
             )
         }
-        viewModel.isDeviceRooted.set(Utils.isDeviceRooted(requireContext()))
+        viewModel.isDeviceRooted.set(Utils.isDeviceRooted(requireContext()) == CardSDKException.INSECURE_ENVIRONMENT)
         viewModel.onSetPINClick = {
             viewModel.retryCount.set(0)
             viewModel.getWidgetsSecureSessionKey(requireContext())
