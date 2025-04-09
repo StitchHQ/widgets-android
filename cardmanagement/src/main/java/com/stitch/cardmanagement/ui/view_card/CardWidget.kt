@@ -214,11 +214,6 @@ class CardWidget : Fragment() {
             savedCardSettings.fontFamily,
             R.font.inconsolata_semi_bold
         )
-        binding.layoutDemoCard.tvCardProfileNameLabel.setWidgetTypeFace(
-            requireContext(),
-            savedCardSettings.fontFamily,
-            R.font.inter_medium
-        )
         binding.layoutDemoCard.tvCardProfileName.setWidgetTypeFace(
             requireContext(),
             savedCardSettings.fontFamily,
@@ -263,9 +258,6 @@ class CardWidget : Fragment() {
             requireContext(), savedCardSettings.fontColor, R.color.white
         )
         binding.layoutDemoCard.tvCardProfileName.setWidgetTextColor(
-            requireContext(), savedCardSettings.fontColor, R.color.white
-        )
-        binding.layoutDemoCard.tvCardProfileNameLabel.setWidgetTextColor(
             requireContext(), savedCardSettings.fontColor, R.color.white
         )
     }

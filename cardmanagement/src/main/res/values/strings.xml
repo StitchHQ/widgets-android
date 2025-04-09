@@ -30,7 +30,7 @@
     <string name="cvv">Cvv</string>
 
     <string name="mask_demo_card">XXXX XXXX XXXX</string>
-    <string name="valid_thru">Valid thru</string>
+    <string name="valid_thru">VALID THRU</string>
 
     <string name="current_pin">Current PIN</string>
     <string name="new_pin">New PIN</string>

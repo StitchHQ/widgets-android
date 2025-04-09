@@ -125,17 +125,6 @@
                 app:layout_constraintTop_toTopOf="parent" />
 
             <androidx.appcompat.widget.AppCompatTextView
-                android:id="@+id/tvCardProfileNameLabel"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="24dp"
-                android:text="@string/card_holder_name"
-                android:textSize="12sp"
-                app:layout_constraintBottom_toTopOf="@+id/tvCardProfileName"
-                app:layout_constraintEnd_toStartOf="@+id/clExpiryCvv"
-                app:layout_constraintStart_toStartOf="parent" />
-
-            <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/tvCardProfileName"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -143,6 +132,7 @@
                 android:layout_marginBottom="24dp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toStartOf="@+id/clExpiryCvv"
+                app:layout_constraintHorizontal_weight="4"
                 app:layout_constraintStart_toStartOf="parent" />
 
             <androidx.constraintlayout.widget.ConstraintLayout
@@ -153,7 +143,8 @@
                 android:layout_marginBottom="24dp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toStartOf="@+id/ivCVVEye"
-                app:layout_constraintStart_toEndOf="@+id/tvCardProfileNameLabel">
+                app:layout_constraintHorizontal_weight="6"
+                app:layout_constraintStart_toEndOf="@+id/tvCardProfileName">
 
                 <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/tvCardExpiryLabel"
