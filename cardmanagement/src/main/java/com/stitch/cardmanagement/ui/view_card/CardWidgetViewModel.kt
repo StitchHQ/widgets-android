@@ -79,7 +79,13 @@ class CardWidgetViewModel : ViewModel() {
             response = {
                 if (it != null) {
                     card = (Card(
-                        cardNumber = CardUtils.getCardNumber(it.items.cardId ?: ""),
+                        embossedName = it.items.embossedName,
+                        cardNumber = CardUtils.getCardNumber(
+                            decrypt(
+                                it.items.cardNumber ?: "",
+                                generatedKey
+                            )
+                        ),
                         cvv2 = decrypt(it.items.cvv2, generatedKey),
                         expiry = getCardExpiry(decrypt(it.items.expiry, generatedKey)),
                         state = "activated"

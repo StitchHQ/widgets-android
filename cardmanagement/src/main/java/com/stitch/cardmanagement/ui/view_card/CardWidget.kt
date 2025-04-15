@@ -18,7 +18,6 @@ import com.stitch.cardmanagement.utilities.CardUtils.getWidgetPadding
 import com.stitch.cardmanagement.utilities.CardUtils.setWidgetFontSize
 import com.stitch.cardmanagement.utilities.CardUtils.setWidgetTextColor
 import com.stitch.cardmanagement.utilities.CardUtils.setWidgetTypeFace
-import com.stitch.cardmanagement.utilities.Constants
 import com.stitch.cardmanagement.utilities.Utils
 
 class CardWidget : Fragment() {
@@ -117,7 +116,7 @@ class CardWidget : Fragment() {
     private fun setCardDataFromAPIResponse() {
         binding.layoutDemoCard.tvCardNumber.text =
             cardNumber(viewModel.isCardNumberMaskEnabled.get() == null || viewModel.isCardNumberMaskEnabled.get() == true)
-        binding.layoutDemoCard.tvCardProfileName.text = Constants.SampleData.CARD_PROFILE_NAME
+        binding.layoutDemoCard.tvCardProfileName.text = viewModel.card.embossedName
         binding.layoutDemoCard.tvCardExpiry.text = viewModel.card.expiry
         binding.layoutDemoCard.tvCardCVV.text =
             cvv(viewModel.isCardCVVMaskEnabled.get() == null || viewModel.isCardCVVMaskEnabled.get() == true)
