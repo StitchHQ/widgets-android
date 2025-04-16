@@ -109,6 +109,9 @@ open class ResetPinWidget : StitchWidget() {
             onResetPinSuccess.invoke()
         }
         viewModel.onResetPINError = { errorCode, errorMessage ->
+            viewModel.oldPin.set("")
+            viewModel.newPin.set("")
+            viewModel.confirmChangePin.set("")
             onResetPINError.invoke()
             if (errorCode == Networking.InternalHttpCode.BAD_REQUEST && errorMessage.isNullOrEmpty())
                 Toast.success(getString(R.string.invalid_old_pin_api_response))

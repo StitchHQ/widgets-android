@@ -76,55 +76,60 @@ open class StitchWidgetViewModel : ViewModel() {
     private fun oldPin(): String = encrypt(oldPin.get() ?: "", encryptionKey)
 
     fun getWidgetsSecureSessionKey(context: Context) {
+        var isValidRequest = false
         if (viewType.get() == Constants.ViewType.SET_CARD_PIN) {
-            validateSetCardPin(context)
+            isValidRequest = validateSetCardPin(context)
         }
         if (viewType.get() == Constants.ViewType.RESET_CARD_PIN) {
-            validateResetCardPin(context)
+            isValidRequest = validateResetCardPin(context)
         }
-        val widgetsSecureSessionKeyRequest = WidgetsSecureSessionKeyRequest(
-            token = secureToken.get() ?: "", deviceFingerprint = fingerprint.get() ?: "",
-        )
-        ApiManager.call(
-            request = ApiManager.widgetSecureSessionKeyAsync(
-                widgetsSecureSessionKeyRequest,
-            ),
-            response = {
-                if (it != null) {
-                    encryptionKey = it.key
-                    callSetOrResetPinAPI(it)
-                }
-            },
-            errorResponse = { errorCode, errorMessage ->
-                handleSecureSessionKeyError(errorCode, errorMessage)
-            },
-            networkListener = networkListener,
-            progressBarListener = progressBarListener,
-            logoutListener = logoutListener,
-        )
+        if (isValidRequest) {
+            val widgetsSecureSessionKeyRequest = WidgetsSecureSessionKeyRequest(
+                token = secureToken.get() ?: "", deviceFingerprint = fingerprint.get() ?: "",
+            )
+            ApiManager.call(
+                request = ApiManager.widgetSecureSessionKeyAsync(
+                    widgetsSecureSessionKeyRequest,
+                ),
+                response = {
+                    if (it != null) {
+                        encryptionKey = it.key
+                        callSetOrResetPinAPI(it)
+                    }
+                },
+                errorResponse = { errorCode, errorMessage ->
+                    handleSecureSessionKeyError(errorCode, errorMessage)
+                },
+                networkListener = networkListener,
+                progressBarListener = progressBarListener,
+                logoutListener = logoutListener,
+            )
+        }
     }
 
-    private fun validateSetCardPin(context: Context) {
-        if (pin.validatePIN(context = context)) return
-        if (confirmPin.validateConfirmPIN(context = context)) return
+    private fun validateSetCardPin(context: Context): Boolean {
+        if (pin.validatePIN(context = context)) return false
+        if (confirmPin.validateConfirmPIN(context = context)) return false
         if (pin.get() != confirmPin.get()) {
             Toast.error(context.getString(R.string.invalid_pin_mismatch))
-            return
+            return false
         }
+        return true
     }
 
-    private fun validateResetCardPin(context: Context) {
-        if (oldPin.validateOldPIN(context = context)) return
-        if (newPin.validateNewPIN(context = context)) return
-        if (confirmChangePin.validateConfirmPIN(context = context)) return
+    private fun validateResetCardPin(context: Context): Boolean {
+        if (oldPin.validateOldPIN(context = context)) return false
+        if (newPin.validateNewPIN(context = context)) return false
+        if (confirmChangePin.validateConfirmPIN(context = context)) return false
         if (oldPin.get() == newPin.get()) {
             Toast.error(context.getString(R.string.invalid_change_pin_mismatch))
-            return
+            return false
         }
         if (newPin.get() != confirmChangePin.get()) {
             Toast.error(context.getString(R.string.invalid_pin_mismatch))
-            return
+            return false
         }
+        return true
     }
 
     private fun callSetOrResetPinAPI(widgetsSecureSessionKeyResponse: WidgetsSecureSessionKeyResponse) {
