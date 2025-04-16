@@ -8,10 +8,18 @@ import androidx.core.content.res.ResourcesCompat
 object CardUtils {
 
     fun getCardNumber(cardNumber: String): String {
-        return cardNumber.substring(0, 4) + " " +
-                cardNumber.substring(4, 8) + " " +
-                cardNumber.substring(8, 12) + " " +
-                cardNumber.substring(12, 16)
+        return if (cardNumber.length > 16) {
+            cardNumber.substring(0, 4) + " " +
+                    cardNumber.substring(4, 8) + " " +
+                    cardNumber.substring(8, 12) + " " +
+                    cardNumber.substring(12, 16) + " " +
+                    cardNumber.substring(16, cardNumber.length)
+        } else {
+            cardNumber.substring(0, 4) + " " +
+                    cardNumber.substring(4, 8) + " " +
+                    cardNumber.substring(8, 12) + " " +
+                    cardNumber.substring(12, 16)
+        }
     }
 
     fun TextView.setWidgetTypeFace(context: Context, actualFont: Int?, defaultFont: Int) {

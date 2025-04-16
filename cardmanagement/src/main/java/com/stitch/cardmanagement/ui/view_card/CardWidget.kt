@@ -29,7 +29,7 @@ class CardWidget : Fragment() {
         return if (isMasked) String.format(
             "%s %s",
             getString(R.string.mask_demo_card),
-            viewModel.card.cardNumber?.let {
+            viewModel.card.cardNumber?.replace(" ", "")?.let {
                 it.substring(it.length - 4, it.length)
             }) else viewModel.card.cardNumber ?: ""
     }
